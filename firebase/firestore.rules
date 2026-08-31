@@ -1,0 +1,12 @@
+rules_version = '2';
+
+// Fluxa Prospect — só a conta do Deivid lê ou escreve qualquer coisa.
+// Cole em: Firestore Database → Rules → Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{documento=**} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email == 'deivid123.leite@gmail.com';
+    }
+  }
+}
