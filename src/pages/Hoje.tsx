@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAtualizaLead, useLeads } from '../hooks/useLeads'
 import type { Lead } from '../lib/types'
+import { ESTAGIOS_ENCERRADOS } from '../lib/types'
 import { LeadCard } from '../components/LeadCard'
 import { CanalSheet } from '../components/CanalSheet'
 import { dataCurta, diasAtraso, hojeIso, somaDias } from '../lib/format'
@@ -16,11 +17,7 @@ export function Hoje() {
   const hoje = hojeIso()
   const followups = leads
     .filter(
-      (l) =>
-        l.followup_em &&
-        l.followup_em <= hoje &&
-        l.estagio !== 'fechado' &&
-        l.estagio !== 'perdido',
+      (l) => l.followup_em && l.followup_em <= hoje && !ESTAGIOS_ENCERRADOS.includes(l.estagio),
     )
     .sort((a, b) => (a.followup_em! < b.followup_em! ? -1 : 1))
 

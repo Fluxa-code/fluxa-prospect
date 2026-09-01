@@ -11,6 +11,7 @@ import { auth, configurado } from './lib/firebase'
 import { useSession } from './hooks/useSession'
 import { useLeads } from './hooks/useLeads'
 import { hojeIso } from './lib/format'
+import { ESTAGIOS_ENCERRADOS } from './lib/types'
 import { Login } from './pages/Login'
 import { Hoje } from './pages/Hoje'
 import { Lista } from './pages/Lista'
@@ -51,11 +52,7 @@ function PendenciasHoje() {
   if (!leads) return null
   const hoje = hojeIso()
   const pendentes = leads.filter(
-    (l) =>
-      l.followup_em &&
-      l.followup_em <= hoje &&
-      l.estagio !== 'fechado' &&
-      l.estagio !== 'perdido',
+    (l) => l.followup_em && l.followup_em <= hoje && !ESTAGIOS_ENCERRADOS.includes(l.estagio),
   ).length
   if (pendentes === 0) return null
   return <span className="nav-badge">{pendentes}</span>

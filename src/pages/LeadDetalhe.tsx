@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ChevronLeft, Globe, MessageCircle, Phone, Plus } from 'lucide-react'
 import { IconeFacebook, IconeInstagram } from '../components/IconesSociais'
+import { MensagemSugerida } from '../components/MensagemSugerida'
 import { useAtualizaLead, useContatos, useLeads } from '../hooks/useLeads'
 import type { Estagio, Lead } from '../lib/types'
 import {
@@ -43,9 +44,10 @@ function CampoValor({ lead }: { lead: Lead }) {
 function CampoPerda({ lead }: { lead: Lead }) {
   const atualiza = useAtualizaLead()
   const [motivo, setMotivo] = useState(lead.perda_motivo)
+  const recusa = lead.estagio === 'recusado'
   return (
     <div className="linha-valor">
-      <label className="label">Motivo da perda</label>
+      <label className="label">{recusa ? 'Motivo da recusa' : 'Motivo da perda'}</label>
       <input
         className="input"
         value={motivo}
@@ -55,7 +57,7 @@ function CampoPerda({ lead }: { lead: Lead }) {
             atualiza.mutate({ id: lead.id, patch: { perda_motivo: motivo } })
           }
         }}
-        placeholder="ex.: fechou com outra agência"
+        placeholder={recusa ? 'ex.: já tem site, sem interesse' : 'ex.: fechou com outra agência'}
       />
     </div>
   )
@@ -177,7 +179,9 @@ export function LeadDetalhe() {
         ))}
       </div>
       {(lead.estagio === 'negociacao' || lead.estagio === 'fechado') && <CampoValor key={`v${lead.id}`} lead={lead} />}
-      {lead.estagio === 'perdido' && <CampoPerda key={`p${lead.id}`} lead={lead} />}
+      {(lead.estagio === 'perdido' || lead.estagio === 'recusado') && (
+        <CampoPerda key={`p${lead.id}-${lead.estagio}`} lead={lead} />
+      )}
 
       <h3 className="secao">Follow-up</h3>
       <div className="chips-row">
@@ -247,6 +251,8 @@ export function LeadDetalhe() {
             </p>
           ))}
       </div>
+
+      <MensagemSugerida key={`m${lead.id}`} lead={lead} />
 
       <div className="registrar-wrap">
         <button className="btn btn-gold largo" onClick={() => setContatoAberto(true)}>

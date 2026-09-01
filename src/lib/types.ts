@@ -14,6 +14,7 @@ export type Estagio =
   | 'respondeu'
   | 'negociacao'
   | 'fechado'
+  | 'recusado'
   | 'perdido'
 
 export type Verificacao = 'completa' | 'parcial' | 'nao_informado'
@@ -90,6 +91,7 @@ export const ESTAGIO_VALUES: Estagio[] = [
   'respondeu',
   'negociacao',
   'fechado',
+  'recusado',
   'perdido',
 ]
 
@@ -99,8 +101,12 @@ export const ESTAGIO_LABEL: Record<Estagio, string> = {
   respondeu: 'Respondeu',
   negociacao: 'Em negociação',
   fechado: 'Fechado',
+  recusado: 'Recusou',
   perdido: 'Perdido',
 }
+
+/** Estados terminais: saem do "Hoje" e não recebem follow-up. */
+export const ESTAGIOS_ENCERRADOS: Estagio[] = ['fechado', 'recusado', 'perdido']
 
 export const VERIFICACAO_LABEL: Record<Verificacao, string> = {
   completa: 'Verificação completa',

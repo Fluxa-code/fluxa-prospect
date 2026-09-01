@@ -16,6 +16,7 @@ const COR_ESTAGIO: Record<Estagio, string> = {
   respondeu: 'gold',
   negociacao: 'gold',
   fechado: 'verde',
+  recusado: 'vermelho',
   perdido: 'vermelho',
 }
 

@@ -24,7 +24,7 @@ export function Funil() {
 
   const contatados = leads.filter((l) => l.estagio !== 'nao_contatado').length
   const responderam = leads.filter((l) =>
-    ['respondeu', 'negociacao', 'fechado'].includes(l.estagio),
+    ['respondeu', 'negociacao', 'fechado', 'recusado'].includes(l.estagio),
   ).length
   const taxa = contatados > 0 ? Math.round((responderam / contatados) * 100) : 0
 
@@ -89,7 +89,7 @@ export function Funil() {
             <span className="barra-rotulo">{ESTAGIO_LABEL[estagio]}</span>
             <div className="barra-trilho">
               <div
-                className={`barra ${estagio === 'fechado' ? 'barra-verde' : estagio === 'perdido' ? 'barra-vermelha' : ''}`}
+                className={`barra ${estagio === 'fechado' ? 'barra-verde' : estagio === 'perdido' || estagio === 'recusado' ? 'barra-vermelha' : ''}`}
                 style={{ width: `${Math.max(2, (qtd / maxEstagio) * 100)}%` }}
               />
             </div>
