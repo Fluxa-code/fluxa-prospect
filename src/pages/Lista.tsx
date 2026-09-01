@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { Plus } from 'lucide-react'
 import { useLeads } from '../hooks/useLeads'
 import type { Lead } from '../lib/types'
 import {
@@ -12,6 +13,7 @@ import {
 import { LeadCard } from '../components/LeadCard'
 import { CanalSheet } from '../components/CanalSheet'
 import { BottomSheet } from '../components/BottomSheet'
+import { NovoLeadForm } from '../components/NovoLeadForm'
 import { combinaBusca } from '../lib/format'
 
 type Grupo = 'tier' | 'estagio' | 'canal' | 'cat' | 'verificacao'
@@ -36,6 +38,7 @@ export function Lista() {
   })
   const [sheetAberta, setSheetAberta] = useState<Grupo | null>(null)
   const [canalDe, setCanalDe] = useState<Lead | null>(null)
+  const [novoAberto, setNovoAberto] = useState(false)
 
   const categorias = useMemo(
     () => [...new Set((leads ?? []).map((l) => l.cat).filter(Boolean))].sort(),
@@ -83,9 +86,14 @@ export function Lista() {
     <div className="pagina">
       <header className="pagina-topo">
         <h2>Leads</h2>
-        <span className="sub">
-          {filtrados.length} de {leads?.length ?? 0}
-        </span>
+        <div className="topo-acoes">
+          <span className="sub">
+            {filtrados.length} de {leads?.length ?? 0}
+          </span>
+          <button className="btn btn-gold btn-novo" onClick={() => setNovoAberto(true)}>
+            <Plus size={16} /> Novo
+          </button>
+        </div>
       </header>
 
       <input
@@ -152,6 +160,14 @@ export function Lista() {
       </BottomSheet>
 
       <CanalSheet lead={canalDe} onFechar={() => setCanalDe(null)} />
+
+      <BottomSheet
+        aberto={novoAberto}
+        titulo="Novo lead"
+        onFechar={() => setNovoAberto(false)}
+      >
+        <NovoLeadForm categorias={categorias} onFechar={() => setNovoAberto(false)} />
+      </BottomSheet>
     </div>
   )
 }

@@ -352,6 +352,21 @@ button {
   font-weight: 700;
 }
 
+.topo-acoes {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-novo {
+  padding: 8px 14px;
+  font-size: 0.86rem;
+}
+
+select.input {
+  color-scheme: dark;
+}
+
 .secao {
   font-family: var(--fonte-ui);
   font-size: 0.72rem;

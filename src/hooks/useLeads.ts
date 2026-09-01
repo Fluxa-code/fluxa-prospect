@@ -6,6 +6,7 @@ import {
   getDocs,
   orderBy,
   query,
+  setDoc,
   updateDoc,
   where,
   writeBatch,
@@ -65,6 +66,27 @@ export function useAtualizaLead() {
       qc.setQueryData<Lead[]>(['leads'], (atual) =>
         atual?.map((l) => (l.id === id ? { ...l, ...patch } : l)),
       )
+    },
+  })
+}
+
+export function useCriaLead() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (dados: Omit<Lead, 'id' | 'atualizado_em'>) => {
+      // Próximo id livre, lido do servidor para não colidir com a base importada.
+      const atuais = await getDocs(leadsCol())
+      const maxId = atuais.docs.reduce((m, d) => Math.max(m, Number(d.id) || 0), 0)
+      const id = maxId + 1
+      await setDoc(doc(db, 'leads', String(id)), {
+        ...dados,
+        id,
+        atualizado_em: new Date().toISOString(),
+      })
+      return id
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['leads'] })
     },
   })
 }

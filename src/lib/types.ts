@@ -135,3 +135,15 @@ export const CANAL_CONTATO_LABEL: Record<CanalContato, string> = {
 }
 
 export const TIER_VALUES = ['A', 'B', 'C', 'D'] as const
+
+/** Os 8 estados de site que existem na base (o texto exato importa: gera o escopo da mensagem). */
+export const ESTADO_SITE_VALUES = [
+  'Sem presença digital',
+  'Só redes sociais',
+  'Site quebrado / domínio perdido',
+  'Site obsoleto',
+  'Site datado',
+  'Site aceitável',
+  'Site moderno',
+  'Franquia (site da rede)',
+] as const
