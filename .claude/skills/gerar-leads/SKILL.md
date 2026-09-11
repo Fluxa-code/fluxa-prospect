@@ -58,6 +58,15 @@ Produz `C:\Users\deivi\Downloads\leads_<area>.json` pronto para o app
 - **Dedupe**: antes de fechar, conferir nome/telefone contra a base (export mais
   recente em Downloads, ou perguntar). Endereços conflitantes entre fontes: registrar
   a divergência em `problemas`/`notas`, nunca escolher em silêncio.
+- **Antes de classificar como "sem site"**: testar variações de domínio
+  (`<nome>.com.br`, `<nome>.com`, `loja.<nome>.com(.br)`) e procurar link de site
+  nas bios de Instagram e páginas de marketplace. Registrar as tentativas negativas
+  na `evidencia`. Lição de 2026-09-11: a Melo Automóveis tinha site em
+  `loja.meloautomoveis.com` que a pesquisa por nome não achou — o gancho "vocês não
+  têm site" saiu errado e a atendente desmontou com um link.
+- **Pesquisa nunca prova ausência.** Afirmações sobre o que o lead NÃO tem só em
+  primeira pessoa ("procurei e não achei"), nunca categóricas ("vocês não têm") —
+  vale para `problemas`, `oportunidade` e qualquer texto que vire mensagem.
 - **Nunca inventar dado.** Sem telefone achado = campo vazio + nota "levantar na
   fachada". O Deivid já queimou conversa por dado errado — na dúvida, `baixa` + nota.
 - **`origem`**: `"pesquisa web <data> — lote <área>"`.
