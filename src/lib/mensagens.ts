@@ -47,7 +47,7 @@ const GANCHO: Record<Escopo, (l: Lead) => string> = {
   datado: (l) =>
     `Vi o site da ${l.nome} e ele está funcionando, mas com cara de alguns anos atrás — dá pra modernizar sem começar do zero.`,
   so_redes: (l) =>
-    `Vi que a ${l.nome} tem movimento nas redes, mas quem pesquisa no Google não encontra um site de vocês — e tem cliente que só fecha depois de ver um.`,
+    `Vi que a ${l.nome} tem movimento nas redes, mas procurei o site de vocês no Google e não consegui achar — e tem cliente que só fecha depois de ver um.`,
   sem_presenca: (l) =>
     `Procurei a ${l.nome} no Google e não achei site nem página própria — hoje quem busca "${l.segmento.toLowerCase()} perto de mim" está caindo direto no concorrente.`,
   aceitavel: (l) =>
@@ -55,7 +55,7 @@ const GANCHO: Record<Escopo, (l: Lead) => string> = {
   moderno: (l) =>
     `O site da ${l.nome} está bonito — meu papo não é refazer nada, é trazer mais visita qualificada pra ele com Google e tráfego pago.`,
   franquia: (l) =>
-    `Vi que a ${l.nome} aparece só na página da rede — uma página própria da unidade coloca vocês na frente de quem busca aqui na região.`,
+    `Procurando a ${l.nome} no Google, só achei a página da rede — uma página própria da unidade coloca vocês na frente de quem busca aqui na região.`,
   generico: (l) =>
     `Dei uma olhada na presença digital da ${l.nome} e vi espaço claro pra trazer mais cliente pelo Google e WhatsApp.`,
 }
@@ -67,16 +67,16 @@ const PROPOSTA: Record<string, string> = {
   Automotivo: 'orçamento rápido pelo WhatsApp e presença no Google pra quem busca peça e serviço na região',
   Gráfica: 'portfólio online e orçamento chegando pelo WhatsApp em dois cliques',
   Logística: 'página com cotação e contato direto, passando confiança pra fechar contrato com empresa',
-  Saúde: 'agendamento simples pelo site e WhatsApp, sem telefone ocupado',
+  Saúde: 'agendamento pelo site com chatbot no WhatsApp confirmando e lembrando o paciente — sem telefone ocupado e menos falta',
   Tecnologia: 'vitrine dos serviços e captação de orçamentos por quem busca no Google',
   Construção: 'portfólio de obras e pedido de orçamento direto no WhatsApp',
-  Beleza: 'agendamento online e vitrine dos serviços pra quem descobre vocês no Instagram e no Google',
+  Beleza: 'agenda online com chatbot no WhatsApp que confirma e lembra a cliente — menos furo de horário — e vitrine dos serviços no Google',
   Casa: 'portfólio dos trabalhos e orçamento pelo WhatsApp',
   Indústria: 'site institucional que passa solidez pra comprador e fornecedor',
   Serviços: 'página que transforma busca no Google em orçamento no seu WhatsApp',
-  Esporte: 'página com planos e horários, com matrícula começando pelo WhatsApp',
-  Educação: 'página com cursos e turmas, com matrícula começando pelo WhatsApp',
-  Pet: 'agendamento de banho e tosa pelo WhatsApp e presença no Google pra quem procura na região',
+  Esporte: 'página com planos e horários e chatbot no WhatsApp agendando aula experimental e matrícula',
+  Educação: 'página com cursos e turmas e chatbot no WhatsApp tirando dúvida e agendando matrícula',
+  Pet: 'agendamento de banho e tosa com chatbot no WhatsApp que confirma e lembra o tutor, e presença no Google',
 }
 
 const PROPOSTA_PADRAO = 'presença no Google e orçamentos chegando direto no seu WhatsApp'
