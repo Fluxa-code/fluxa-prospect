@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
   orderBy,
@@ -99,6 +100,34 @@ export function useRegistraContato() {
     },
     onSuccess: (_dados, contato) => {
       qc.invalidateQueries({ queryKey: ['contatos', contato.lead_id] })
+      qc.invalidateQueries({ queryKey: ['contatos', 'todos'] })
+    },
+  })
+}
+
+export function useAtualizaContato() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (contato: Contato) => {
+      const { id, ...campos } = contato
+      await updateDoc(doc(db, 'contatos', id), campos)
+      return contato
+    },
+    onSuccess: (contato) => {
+      qc.invalidateQueries({ queryKey: ['contatos', contato.lead_id] })
+      qc.invalidateQueries({ queryKey: ['contatos', 'todos'] })
+    },
+  })
+}
+
+export function useApagaContato() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id }: { id: string; lead_id: number }) => {
+      await deleteDoc(doc(db, 'contatos', id))
+    },
+    onSuccess: (_r, { lead_id }) => {
+      qc.invalidateQueries({ queryKey: ['contatos', lead_id] })
       qc.invalidateQueries({ queryKey: ['contatos', 'todos'] })
     },
   })

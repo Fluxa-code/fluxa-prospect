@@ -48,8 +48,18 @@ export function ContatoForm({ lead, onFechar }: { lead: Lead; onFechar: () => vo
         patch: { estagio: 'contatado' as Estagio },
       })
     }
+    if (!respondeu && !followup) {
+      lista.push({
+        chave: 'followup3',
+        rotulo: 'Agendar follow-up em 3 dias (sem resposta)',
+        patch: {
+          followup_em: somaDias(hojeIso(), 3),
+          followup_nota: 'sem resposta — reforçar',
+        },
+      })
+    }
     return lista
-  }, [canal, resposta, lead.canal_status, lead.estagio])
+  }, [canal, resposta, followup, lead.canal_status, lead.estagio])
 
   const [desmarcadas, setDesmarcadas] = useState<Set<string>>(new Set())
 

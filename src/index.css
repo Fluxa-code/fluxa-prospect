@@ -1154,6 +1154,60 @@ select.input {
   }
 }
 
+/* histórico: corrigir/apagar contato */
+
+.contato-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.contato-acoes {
+  display: flex;
+  gap: 4px;
+}
+
+.icone-btn {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: var(--texto-3);
+  padding: 5px 6px;
+  cursor: pointer;
+  display: inline-flex;
+  transition: color var(--transicao), background var(--transicao);
+}
+
+.icone-btn:hover {
+  color: var(--gold);
+  background: var(--gold-fundo);
+}
+
+.icone-btn.perigo:hover {
+  color: var(--vermelho);
+  background: var(--vermelho-fundo);
+}
+
+/* anti-duplicata do novo lead */
+
+.parecidos {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.link-parecido {
+  background: none;
+  border: none;
+  color: var(--laranja);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.88rem;
+  text-align: left;
+}
+
 /* ============ dados ============ */
 
 .importacao ul {

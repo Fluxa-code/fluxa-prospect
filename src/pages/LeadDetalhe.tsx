@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ChevronLeft, Globe, MessageCircle, Phone, Plus } from 'lucide-react'
+import { ChevronLeft, Globe, MessageCircle, Pencil, Phone, Plus, Trash2 } from 'lucide-react'
 import { IconeFacebook, IconeInstagram } from '../components/IconesSociais'
 import { MensagemSugerida } from '../components/MensagemSugerida'
-import { useAtualizaLead, useContatos, useLeads } from '../hooks/useLeads'
-import type { Estagio, Lead } from '../lib/types'
+import { EditarContatoSheet } from '../components/EditarContatoSheet'
+import { useApagaContato, useAtualizaLead, useContatos, useLeads } from '../hooks/useLeads'
+import type { Contato, Estagio, Lead } from '../lib/types'
 import {
   CANAL_CONTATO_LABEL,
   ESTAGIO_LABEL,
@@ -70,8 +71,10 @@ export function LeadDetalhe() {
   const lead = leads?.find((l) => l.id === Number(id))
   const { data: contatos } = useContatos(Number(id))
   const atualiza = useAtualizaLead()
+  const apaga = useApagaContato()
   const [canalAberto, setCanalAberto] = useState(false)
   const [contatoAberto, setContatoAberto] = useState(false)
+  const [contatoEmEdicao, setContatoEmEdicao] = useState<Contato | null>(null)
 
   if (!leads) return <p className="aviso-tela">Carregando…</p>
   if (!lead) return <p className="aviso-tela">Lead não encontrado.</p>
@@ -264,9 +267,31 @@ export function LeadDetalhe() {
       {contatos?.length === 0 && <p className="vazio">Nenhum contato registrado ainda.</p>}
       {contatos?.map((c) => (
         <div key={c.id} className="card contato">
-          <span className="sub">
-            {dataHora(c.em)} · {CANAL_CONTATO_LABEL[c.canal]}
-          </span>
+          <div className="contato-topo">
+            <span className="sub">
+              {dataHora(c.em)} · {CANAL_CONTATO_LABEL[c.canal]}
+            </span>
+            <div className="contato-acoes">
+              <button
+                className="icone-btn"
+                title="Corrigir"
+                onClick={() => setContatoEmEdicao(c)}
+              >
+                <Pencil size={14} />
+              </button>
+              <button
+                className="icone-btn perigo"
+                title="Apagar"
+                onClick={() => {
+                  if (window.confirm(`Apagar o contato de ${dataHora(c.em)}? Não dá pra desfazer.`)) {
+                    apaga.mutate({ id: c.id, lead_id: c.lead_id })
+                  }
+                }}
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
+          </div>
           {c.enviado && <p>{c.enviado}</p>}
           {c.resposta && <p className="resposta">↳ {c.resposta}</p>}
         </div>
@@ -275,6 +300,7 @@ export function LeadDetalhe() {
       </div>
       </div>
 
+      <EditarContatoSheet contato={contatoEmEdicao} onFechar={() => setContatoEmEdicao(null)} />
       <CanalSheet lead={canalAberto ? lead : null} onFechar={() => setCanalAberto(false)} />
       <BottomSheet
         aberto={contatoAberto}

@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { Lead } from '../lib/types'
-import { ESTADO_SITE_VALUES, TIER_VALUES } from '../lib/types'
-import { useCriaLead } from '../hooks/useLeads'
+import { ESTADO_SITE_VALUES, ESTAGIO_LABEL, TIER_VALUES } from '../lib/types'
+import { useCriaLead, useLeads } from '../hooks/useLeads'
+import { combinaBusca } from '../lib/format'
 
 // Score padrão por tier, na régua da base importada (A 95-85, B ~77, C ~50, D baixo).
 const SCORE_POR_TIER: Record<string, number> = { A: 88, B: 75, C: 50, D: 30 }
@@ -16,6 +17,7 @@ export function NovoLeadForm({
 }) {
   const navigate = useNavigate()
   const cria = useCriaLead()
+  const { data: leads } = useLeads()
 
   const [nome, setNome] = useState('')
   const [segmento, setSegmento] = useState('')
@@ -28,6 +30,26 @@ export function NovoLeadForm({
   const [tier, setTier] = useState('C')
   const [notas, setNotas] = useState('')
   const [erro, setErro] = useState('')
+
+  // Anti-duplicata: compara nome (sem acento, nos dois sentidos) e telefone com a base.
+  const parecidos = useMemo(() => {
+    const alvoNome = nome.trim()
+    const alvoTel = telefone.replace(/\D/g, '')
+    if (alvoNome.length < 4 && alvoTel.length < 8) return []
+    return (leads ?? [])
+      .filter((l) => {
+        const porNome =
+          alvoNome.length >= 4 &&
+          (combinaBusca(l.nome, alvoNome) || combinaBusca(alvoNome, l.nome))
+        const telefoneLead = l.telefone.replace(/\D/g, '')
+        const porTelefone =
+          alvoTel.length >= 8 &&
+          telefoneLead.length >= 8 &&
+          (telefoneLead.includes(alvoTel) || alvoTel.includes(telefoneLead))
+        return porNome || porTelefone
+      })
+      .slice(0, 3)
+  }, [leads, nome, telefone])
 
   async function salvar() {
     if (!nome.trim()) {
@@ -82,6 +104,25 @@ export function NovoLeadForm({
         placeholder="ex.: Padaria do Zé"
         autoFocus
       />
+
+      {parecidos.length > 0 && (
+        <div className="alerta alerta-laranja parecidos">
+          <span>⚠ Já existe na base — confere antes de duplicar:</span>
+          {parecidos.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              className="link-parecido"
+              onClick={() => {
+                onFechar()
+                navigate(`/lead/${p.id}`)
+              }}
+            >
+              {p.nome} · {ESTAGIO_LABEL[p.estagio]}{p.telefone ? ` · ${p.telefone}` : ''}
+            </button>
+          ))}
+        </div>
+      )}
 
       <label className="label">Segmento</label>
       <input
