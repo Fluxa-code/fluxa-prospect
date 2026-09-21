@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Plus } from 'lucide-react'
-import { useLeads } from '../hooks/useLeads'
+import { useLeads, useRecuperaDataCriacao } from '../hooks/useLeads'
+import { agrupaPorCriacao, type Ordem } from '../lib/ordem'
 import type { Lead } from '../lib/types'
 import {
   CANAL_STATUS_LABEL,
@@ -26,8 +27,21 @@ const GRUPO_TITULO: Record<Grupo, string> = {
   verificacao: 'Verificação',
 }
 
+const CHAVE_ORDEM = 'fluxa-prospect:ordem-lista'
+
+function ordemSalva(): Ordem {
+  try {
+    return localStorage.getItem(CHAVE_ORDEM) === 'recentes' ? 'recentes' : 'prioridade'
+  } catch {
+    return 'prioridade'
+  }
+}
+
 export function Lista() {
   const { data: leads, isLoading } = useLeads()
+  const recupera = useRecuperaDataCriacao()
+  const [ordem, setOrdem] = useState<Ordem>(ordemSalva)
+  const jaTentouRecuperar = useRef(false)
   const [busca, setBusca] = useState('')
   const [filtros, setFiltros] = useState<Record<Grupo, Set<string>>>({
     tier: new Set(),
@@ -77,6 +91,30 @@ export function Lista() {
       return true
     })
   }, [leads, filtros, busca])
+
+  const grupos = useMemo(
+    () => (ordem === 'recentes' ? agrupaPorCriacao(filtrados) : []),
+    [ordem, filtrados],
+  )
+
+  useEffect(() => {
+    if (ordem !== 'recentes' || !leads || jaTentouRecuperar.current) return
+    const semData = leads.filter((l) => !l.criado_em).map((l) => l.id)
+    if (semData.length === 0) return
+    jaTentouRecuperar.current = true
+    recupera.mutate(semData, {
+      onError: (e) => console.warn('Não deu pra recuperar a data de inserção:', e),
+    })
+  }, [ordem, leads, recupera])
+
+  function trocaOrdem(nova: Ordem) {
+    setOrdem(nova)
+    try {
+      localStorage.setItem(CHAVE_ORDEM, nova)
+    } catch {
+      // navegador bloqueando storage: a ordem só não fica lembrada
+    }
+  }
 
   if (isLoading) return <p className="aviso-tela">Carregando…</p>
 
@@ -133,9 +171,38 @@ export function Lista() {
         )}
       </div>
 
-      {filtrados.map((lead) => (
-        <LeadCard key={lead.id} lead={lead} onCanal={setCanalDe} />
-      ))}
+      <div className="chips-row ordem">
+        <span className="label">Ordem</span>
+        <button
+          className={`chip ${ordem === 'prioridade' ? 'ativa' : ''}`}
+          onClick={() => trocaOrdem('prioridade')}
+        >
+          Prioridade
+        </button>
+        <button
+          className={`chip ${ordem === 'recentes' ? 'ativa' : ''}`}
+          onClick={() => trocaOrdem('recentes')}
+        >
+          Mais recentes
+        </button>
+        {recupera.isPending && <span className="sub">buscando datas de inserção…</span>}
+      </div>
+
+      {ordem === 'prioridade' &&
+        filtrados.map((lead) => <LeadCard key={lead.id} lead={lead} onCanal={setCanalDe} />)}
+
+      {ordem === 'recentes' &&
+        grupos.map((g) => (
+          <section key={g.chave}>
+            <h3 className="secao">
+              {g.rotulo} · {g.leads.length} lead{g.leads.length === 1 ? '' : 's'}
+            </h3>
+            {g.leads.map((lead) => (
+              <LeadCard key={lead.id} lead={lead} onCanal={setCanalDe} />
+            ))}
+          </section>
+        ))}
+
       {filtrados.length === 0 && <p className="vazio">Nenhum lead com esses filtros.</p>}
 
       <BottomSheet

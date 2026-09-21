@@ -358,6 +358,14 @@ button {
   gap: 12px;
 }
 
+.chips-row.ordem {
+  margin-top: 2px;
+}
+
+.chips-row.ordem .label {
+  margin: 0 2px 0 0;
+}
+
 .btn-novo {
   padding: 8px 14px;
   font-size: 0.86rem;

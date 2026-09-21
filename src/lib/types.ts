@@ -54,6 +54,7 @@ export interface Lead {
   followup_nota: string
   auditoria: Record<string, unknown>
   atualizado_em: string
+  criado_em?: string
 }
 
 export interface Contato {

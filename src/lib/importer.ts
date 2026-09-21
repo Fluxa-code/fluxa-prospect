@@ -162,6 +162,9 @@ function mapeiaLead(raw: RegistroBruto): { lead: LeadImport; contatos: ContatoSe
     followup_nota: str(raw.followup_nota),
     auditoria,
   }
+  // Restaurar um backup exportado mantém a data de inserção original.
+  const criado = str(raw.criado_em)
+  if (criado && Number.isFinite(Date.parse(criado))) lead.criado_em = criado
   return { lead, contatos }
 }
 
