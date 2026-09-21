@@ -67,6 +67,17 @@ Produz `C:\Users\deivi\Downloads\leads_<area>.json` pronto para o app
 - **Pesquisa nunca prova ausência.** Afirmações sobre o que o lead NÃO tem só em
   primeira pessoa ("procurei e não achei"), nunca categóricas ("vocês não têm") —
   vale para `problemas`, `oportunidade` e qualquer texto que vire mensagem.
+- **Telefone só entra no campo `telefone` se a fonte for primária** (site oficial,
+  bio verificada, CNPJ) — o campo alimenta o botão de WhatsApp do app e vira
+  disparo com um toque. Número de fonte indireta (post solto, diretório) vai em
+  `notas` como "possível, confirmar antes de usar". Lição de 2026-09-11: um número
+  de post de Facebook atribuído à Carol Lash era de terceiro e o Deivid abordou a
+  pessoa errada.
+- **Checar o incumbente antes de classificar.** Plataforma que já resolve a dor
+  derruba o tier ou descarta o lead: Booksy/Fresha/Trinks (beleza e barbearia),
+  Doctoralia/iMedicina/agenda digital própria (saúde), agência de marketing ativa
+  com site recente (qualquer nicho). Lote de médicos 2026-09-21: descartados quem já
+  tinha agenda online ou agência médica ativa; Doctoralia sem site bom → `C`.
 - **Nunca inventar dado.** Sem telefone achado = campo vazio + nota "levantar na
   fachada". O Deivid já queimou conversa por dado errado — na dúvida, `baixa` + nota.
 - **`origem`**: `"pesquisa web <data> — lote <área>"`.
