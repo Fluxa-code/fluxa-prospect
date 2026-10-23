@@ -81,3 +81,23 @@ Produz `C:\Users\deivi\Downloads\leads_<area>.json` pronto para o app
 - **Nunca inventar dado.** Sem telefone achado = campo vazio + nota "levantar na
   fachada". O Deivid já queimou conversa por dado errado — na dúvida, `baixa` + nota.
 - **`origem`**: `"pesquisa web <data> — lote <área>"`.
+
+## Caminho alternativo: lote via Google Maps Scraper Kit
+
+O kit do Herbert (`Documents\GitHub\gmaps-kit`) enumera negócios por categoria e cidade
+muito mais rápido que a pesquisa manual. Fluxo:
+
+1. `powershell -ExecutionPolicy Bypass -File .\Prospeccao.ps1` (sobe Docker + painel em
+   http://localhost:8090). Deixar a coleta de e-mail DESLIGADA: o Deivid não faz disparo
+   frio por e-mail e isso evita juntar dado pessoal sem uso.
+2. Rodar a busca pelo painel. Os leads ficam em `gmaps-kit/painel/dados/leads.json`.
+3. Converter e auditar:
+   `npx tsx scripts/gmaps-para-fluxa.ts <caminho>/leads.json --id-inicial 5001 --origem "restaurantes Guarulhos" --base <export recente do app>.json`
+   O script audita cada site (DNS, certificado, resposta, ano de copyright, plataforma) e
+   já preenche estado, veredito, tier, score, problemas e evidência.
+4. Revisar o JSON antes de importar. O que o kit traz é listagem do Google Maps, então
+   `verificacao` fica sempre `parcial` e telefone fixo vai para `notas`, nunca para o campo
+   `telefone` (que alimenta o botão de WhatsApp).
+
+A pesquisa manual descrita acima continua valendo quando o lote precisa de enriquecimento
+que o Maps não dá: CNPJ, segundo endereço, dono, histórico do negócio.
