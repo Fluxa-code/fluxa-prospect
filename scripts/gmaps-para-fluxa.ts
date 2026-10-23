@@ -39,6 +39,11 @@ interface Bruto {
   cidade?: string
   uf?: string
   email?: string
+  // nomes do painel do kit
+  nota?: string | number
+  avaliacoes?: string | number
+  maps?: string
+  // nomes do CSV do scrape.py
   review_rating?: string | number
   review_count?: string | number
   [k: string]: unknown
@@ -255,8 +260,14 @@ async function auditaSite(url: string): Promise<Auditoria> {
 
 // ── categoria do Maps -> categoria do app ───────────────────────────────────────
 const CATEGORIAS: [RegExp, string][] = [
-  [/restaurante|pizzaria|lanchonete|hamburgue|food truck|bar\b|churrasc|sushi|cafeteria|caf[ée]/i, 'Restaurante'],
-  [/padaria|mercado|supermercad|a[çc]ougue|adega|distribuidora de bebida|doceria|confeitaria/i, 'Alimentação'],
+  [
+    /restaurante|pizzaria|lanchonete|lanches|hamburgue|burger|food truck|trailer|bar\b|churrasc|sushi|cafeteria|caf[ée]|pastelaria|past[ée]is|hot ?dog|crepe|tapioca|espetinho|marmit|self.?service|comida/i,
+    'Restaurante',
+  ],
+  [
+    /padaria|mercado|supermercad|a[çc]ougue|adega|distribuidora de bebida|doceria|confeitaria|a[çc]a[íi]|sorvet|gelato|sucos|salgados|bolos|chocolate/i,
+    'Alimentação',
+  ],
   [/barbe/i, 'Barbearia'],
   [/sal[ãa]o|cabelei|manicure|est[ée]tica|c[íi]lios|sobrancelha|depila|spa|beleza/i, 'Beleza'],
   [
@@ -281,6 +292,15 @@ const catDoApp = (categoria: string) =>
 const semAcento = (s: string) =>
   s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim()
 const soDigitos = (s: string) => (s ?? '').replace(/\D/g, '')
+
+/** 5511979847732 -> (11) 97984-7732 — o kit devolve só dígitos, com 55 na frente. */
+function formataTel(bruto: string): string {
+  let d = soDigitos(bruto)
+  if (d.startsWith('55') && d.length >= 12) d = d.slice(2)
+  if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`
+  if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`
+  return bruto
+}
 
 function arg(nome: string, padrao?: string): string | undefined {
   const i = process.argv.indexOf(`--${nome}`)
@@ -373,25 +393,29 @@ async function main() {
         confianca: 'media',
       }
     } else {
+      // Régua da skill: negócio vivo (telefone ou avaliações no Google) sem site é B;
+      // só listagem, sem sinal de vida, é C.
+      const vivo = digitos.length >= 10 || Number(b.nota ?? b.review_rating ?? 0) > 0
       a = {
         estado: 'Sem presença digital',
         veredito: '',
-        tier: 'C',
-        score: 50,
+        tier: vivo ? 'B' : 'C',
+        score: vivo ? 70 : 50,
         cms: '',
         problemas: 'sem site e sem rede social na ficha do Google Maps',
         evidencia: `ficha do Google Maps sem site e sem rede social (${HOJE})`,
-        confianca: 'baixa',
+        confianca: vivo ? 'media' : 'baixa',
       }
     }
 
     const notas: string[] = []
     if (digitos.length >= 10 && !ehCelular) {
-      notas.push(`telefone fixo: ${telBruto} — confirmar se tem WhatsApp`)
+      notas.push(`telefone fixo: ${formataTel(telBruto)} — confirmar se tem WhatsApp`)
     }
-    if (b.review_rating) {
-      notas.push(`Google: nota ${b.review_rating} com ${b.review_count ?? '?'} avaliações`)
-    }
+    const nota = b.nota ?? b.review_rating
+    const avaliacoes = b.avaliacoes ?? b.review_count
+    if (nota) notas.push(`Google: nota ${nota} com ${avaliacoes ?? '?'} avaliações`)
+    if (b.maps) notas.push(`ficha no Maps: ${b.maps}`)
     if (b.email) notas.push(`e-mail publicado no site: ${b.email} (não usar para disparo frio)`)
 
     saida.push({
@@ -400,7 +424,7 @@ async function main() {
       segmento: categoria,
       cat: catDoApp(categoria),
       endereco,
-      telefone: ehCelular ? telBruto : '',
+      telefone: ehCelular ? formataTel(telBruto) : '',
       cnpj: '',
       site,
       estado: a.estado,
