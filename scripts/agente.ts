@@ -333,6 +333,24 @@ async function main() {
     (e) => log('erro observando a fila:', e.message),
   )
 
+  // Batimento: o app mostra se o agente esta de pe, para voce saber de fora de casa
+  // se a busca vai rodar agora ou ficar na fila.
+  const bate = async () => {
+    let motorOk = true
+    try {
+      await fetch(`${MOTOR}/api/v1/jobs`)
+    } catch {
+      motorOk = false
+    }
+    await setDoc(
+      doc(db, 'sistema', 'agente'),
+      { visto_em: new Date().toISOString(), motor: motorOk, ocupado },
+      { merge: true },
+    ).catch(() => {})
+  }
+  await bate()
+  setInterval(() => void bate(), 60_000)
+
   log('aguardando buscas… (Ctrl+C para parar)')
 }
 

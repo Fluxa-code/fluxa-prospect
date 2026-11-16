@@ -1735,3 +1735,13 @@ select.input {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.status-agente {
+  margin-top: 6px;
+  padding-top: 7px;
+  border-top: 1px solid var(--borda);
+}
+
+.status-agente small {
+  margin: 0;
+}

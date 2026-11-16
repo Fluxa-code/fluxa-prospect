@@ -14,6 +14,7 @@ import { signOut } from 'firebase/auth'
 import type { User } from 'firebase/auth'
 import { auth } from '../lib/firebase'
 import { useLeads } from '../hooks/useLeads'
+import { useAgente } from '../hooks/useAgente'
 import { hojeIso } from '../lib/format'
 import { ESTAGIOS_ENCERRADOS } from '../lib/types'
 import { modoDemo } from '../lib/demo'
@@ -111,6 +112,7 @@ function ItensNav({ compacto = false }: { compacto?: boolean }) {
 
 export function Sidebar({ usuario }: { usuario: User }) {
   const { total, naoContatados } = usePendencias()
+  const agente = useAgente()
   return (
     <aside className="sidebar">
       <div className="marca">
@@ -131,6 +133,16 @@ export function Sidebar({ usuario }: { usuario: User }) {
           <strong>{total} leads na base</strong>
         </div>
         <small>{naoContatados} ainda não contatados</small>
+        <div className="status-linha status-agente">
+          <span className={`dot ${agente.online ? 'dot-verde' : 'dot-vermelho'}`} />
+          <small>
+            {agente.online
+              ? agente.ocupado
+                ? 'buscando agora'
+                : 'PC de casa ligado'
+              : 'PC de casa desligado'}
+          </small>
+        </div>
       </div>
 
       <div className="sidebar-rodape">

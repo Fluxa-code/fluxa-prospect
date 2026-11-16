@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CheckCircle2, Clock, Loader2, Search, Trash2, TriangleAlert } from 'lucide-react'
 import { useApagaBusca, useBuscas, useCriaBusca } from '../hooks/useBuscas'
+import { useAgente } from '../hooks/useAgente'
 import type { StatusBusca, TamanhoBusca } from '../lib/buscas'
 import { NICHOS_SUGERIDOS, STATUS_ROTULO, TAMANHOS } from '../lib/buscas'
 import { dataHora } from '../lib/format'
@@ -25,6 +26,7 @@ export function Buscas() {
   const buscas = useBuscas()
   const cria = useCriaBusca()
   const apaga = useApagaBusca()
+  const agente = useAgente()
 
   const [termos, setTermos] = useState('')
   const [cidade, setCidade] = useState('Guarulhos')
@@ -75,6 +77,19 @@ export function Buscas() {
           </span>
         </div>
       </header>
+
+      {!agente.online && (
+        <p className="alerta alerta-laranja">
+          ⚠ O computador de casa está desligado. Pode pedir a busca assim mesmo: ela fica na
+          fila e roda sozinha quando você ligar o Prospecta lá.
+        </p>
+      )}
+      {agente.online && !agente.motor && (
+        <p className="alerta alerta-laranja">
+          ⚠ O PC está ligado, mas o motor de busca não está respondendo — rode o Ligar
+          Prospecta na máquina de casa.
+        </p>
+      )}
 
       <div className="duas-colunas">
         <section>
