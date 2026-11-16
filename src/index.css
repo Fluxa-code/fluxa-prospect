@@ -1745,3 +1745,166 @@ select.input {
 .status-agente small {
   margin: 0;
 }
+
+/* ============ quadro do funil ============ */
+
+.pagina-cheia {
+  max-width: none;
+}
+
+.busca-quadro {
+  max-width: 260px;
+}
+
+.quadro {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  align-items: flex-start;
+}
+
+.coluna {
+  flex: 0 0 248px;
+  background: var(--surface);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 12px 10px;
+  transition: border-color var(--transicao), background var(--transicao);
+}
+
+.coluna-alvo {
+  border-color: var(--gold);
+  background: var(--gold-fundo);
+}
+
+.coluna-topo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 2px 8px;
+}
+
+.coluna-topo strong {
+  font-size: 0.86rem;
+  font-weight: 650;
+  flex: 1;
+  min-width: 0;
+}
+
+.coluna-marca {
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.coluna-conta {
+  font-size: 0.75rem;
+  color: var(--texto-3);
+  background: var(--surface-2);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+
+.coluna-soma {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--verde);
+  padding: 0 2px 8px;
+  font-weight: 600;
+}
+
+.coluna-cartoes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 60px;
+}
+
+.coluna-vazia {
+  font-size: 0.75rem;
+  color: var(--texto-3);
+  text-align: center;
+  padding: 14px 0;
+  border: 1px dashed var(--borda);
+  border-radius: var(--raio-mini);
+}
+
+.cartao {
+  background: var(--surface-2);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-mini);
+  padding: 10px;
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: border-color var(--transicao), transform var(--transicao);
+}
+
+.cartao:hover {
+  border-color: var(--gold-escuro);
+}
+
+.cartao.arrastando {
+  opacity: 0.45;
+  transform: scale(0.98);
+}
+
+.cartao-topo {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.cartao-topo strong {
+  flex: 1;
+  font-size: 0.87rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.cartao .sub {
+  font-size: 0.75rem;
+}
+
+.cartao-rodape {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.cartao-valor {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--verde);
+}
+
+.mover {
+  padding: 3px 4px;
+}
+
+@media (max-width: 919px) {
+  .busca-quadro {
+    max-width: none;
+    width: 100%;
+  }
+  .coluna {
+    flex-basis: 76vw;
+  }
+  .cartao {
+    cursor: default;
+  }
+}
+
+.linha-proposta {
+  margin-bottom: 10px;
+}
+
+.linha-proposta .label {
+  margin-top: 0;
+}

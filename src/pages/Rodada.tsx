@@ -4,6 +4,7 @@ import { Check, Copy, MessageCircle, Phone, SkipForward, X } from 'lucide-react'
 import { useAtualizaLead, useLeads, useRegistraContato } from '../hooks/useLeads'
 import type { Estagio, Lead } from '../lib/types'
 import { CANAL_STATUS_LABEL, VERIFICACAO_LABEL } from '../lib/types'
+import { useConfig } from '../hooks/useConfig'
 import { mensagemSugerida } from '../lib/mensagens'
 import { hojeIso, linkTelefone, linkWhatsapp, somaDias } from '../lib/format'
 import { TierBadge } from '../components/Badges'
@@ -27,6 +28,7 @@ export function Rodada() {
   const { data: leads, isLoading } = useLeads()
   const registra = useRegistraContato()
   const atualiza = useAtualizaLead()
+  const ajustes = useConfig()
 
   const [posicao, setPosicao] = useState(0)
   const [texto, setTexto] = useState<string | null>(null)
@@ -99,7 +101,7 @@ export function Rodada() {
     )
   }
 
-  const mensagem = texto ?? mensagemSugerida(lead)
+  const mensagem = texto ?? mensagemSugerida(lead, ajustes)
   const wa = linkWhatsapp(lead.telefone)
   const tel = linkTelefone(lead.telefone)
   const temWhats =
@@ -147,7 +149,7 @@ export function Rodada() {
         id: lead.id,
         patch: {
           estagio: 'contatado' as Estagio,
-          followup_em: somaDias(hojeIso(), 3),
+          followup_em: somaDias(hojeIso(), ajustes.diasFollowup),
           followup_nota: 'sem resposta — reforçar',
           ...(canal === 'whatsapp' && lead.canal_status === 'nao_testado'
             ? { canal_status: 'whatsapp_ok' as const }

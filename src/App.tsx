@@ -8,7 +8,9 @@ import { Lista } from './pages/Lista'
 import { Buscas } from './pages/Buscas'
 import { LeadDetalhe } from './pages/LeadDetalhe'
 import { Funil } from './pages/Funil'
+import { Quadro } from './pages/Quadro'
 import { Rodada } from './pages/Rodada'
+import { Ajustes } from './pages/Ajustes'
 import { Dados } from './pages/Dados'
 
 function SetupPendente() {
@@ -53,6 +55,8 @@ export default function App() {
             <Route path="/lead/:id" element={<LeadDetalhe />} />
             <Route path="/rodada" element={<Rodada />} />
             <Route path="/funil" element={<Funil />} />
+            <Route path="/quadro" element={<Quadro />} />
+            <Route path="/ajustes" element={<Ajustes />} />
             <Route path="/dados" element={<Dados />} />
           </Routes>
         </main>

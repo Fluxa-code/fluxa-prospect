@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { Copy, MessageCircle } from 'lucide-react'
 import type { Lead } from '../lib/types'
 import { ESCOPO_ROTULO, escopoDoLead, mensagemSugerida } from '../lib/mensagens'
+import { useConfig } from '../hooks/useConfig'
 import { linkWhatsapp } from '../lib/format'
 
 export function MensagemSugerida({ lead }: { lead: Lead }) {
-  const [texto, setTexto] = useState(() => mensagemSugerida(lead))
+  const ajustes = useConfig()
+  const [texto, setTexto] = useState(() => mensagemSugerida(lead, ajustes))
   const [copiado, setCopiado] = useState(false)
 
   const wa = linkWhatsapp(lead.telefone)

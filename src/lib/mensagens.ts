@@ -88,16 +88,19 @@ const GANCHO_SAUDE: Partial<Record<Escopo, (l: Lead) => string>> = {
     `O site ${doNome(l)} está muito bem feito. A pergunta que eu faria: hoje o paciente consegue marcar consulta sozinho, a qualquer hora, sem depender de alguém responder?`,
 }
 
-function abertura(l: Lead): string {
-  if (semAcento(l.endereco).includes('guarulhos')) {
-    return 'trabalho com sites e presença digital aqui em Guarulhos'
+function abertura(l: Lead, cidade = 'Guarulhos'): string {
+  if (cidade && semAcento(l.endereco).includes(semAcento(cidade))) {
+    return `trabalho com sites e presença digital aqui em ${cidade}`
   }
   if (l.cat === 'Saúde') return 'trabalho com sites e agendamento online para consultórios'
   return 'trabalho com sites e presença digital para negócios de todo o Brasil'
 }
 
-function fechamento(l: Lead): string {
-  const cta = 'Posso te mandar um diagnóstico rápido e gratuito do que eu mudaria? São 3 pontos, sem compromisso.'
+const CHAMADA_PADRAO =
+  'Posso te mandar um diagnóstico rápido e gratuito do que eu mudaria? São 3 pontos, sem compromisso.'
+
+function fechamento(l: Lead, chamada?: string): string {
+  const cta = chamada?.trim() || CHAMADA_PADRAO
   if (l.cat !== 'Saúde') return cta
   const nome = semAcento(l.nome)
   const quem = /^dra\b/.test(nome) ? 'pra doutora' : /^dr\b/.test(nome) ? 'pro doutor' : 'pra quem decide'
@@ -124,18 +127,33 @@ const PROPOSTA: Record<string, string> = {
   Pet: 'agendamento de banho e tosa com chatbot no WhatsApp que confirma e lembra o tutor, e presença no Google',
 }
 
-const PROPOSTA_PADRAO = 'presença no Google e orçamentos chegando direto no seu WhatsApp'
+export const PROPOSTA_PADRAO = 'presença no Google e orçamentos chegando direto no seu WhatsApp'
 
-export function mensagemSugerida(lead: Lead): string {
+/** Texto embutido da categoria (o que os Ajustes mostram como sugestão). */
+export function propostaDe(cat: string): string {
+  return PROPOSTA[cat] ?? ''
+}
+
+/** Preferências vindas dos Ajustes; tudo opcional. */
+export interface AjustesMensagem {
+  apresentacao?: string
+  cidade?: string
+  chamada?: string
+  propostas?: Record<string, string>
+}
+
+export function mensagemSugerida(lead: Lead, ajustes: AjustesMensagem = {}): string {
   const escopo = escopoDoLead(lead)
   const saude = lead.cat === 'Saúde'
   const gancho = (saude ? GANCHO_SAUDE[escopo] : undefined) ?? GANCHO[escopo]
   const textoGancho = saude ? gancho(lead).replace(/\bcliente\b/g, 'paciente') : gancho(lead)
-  const proposta = PROPOSTA[lead.cat] ?? PROPOSTA_PADRAO
+  // os Ajustes mandam; sem eles, vale o texto embutido
+  const proposta = ajustes.propostas?.[lead.cat]?.trim() || PROPOSTA[lead.cat] || PROPOSTA_PADRAO
+  const apresentacao = ajustes.apresentacao?.trim() || 'Oi, tudo bem? Aqui é o Deivid, da Fluxa'
   return (
-    `Oi, tudo bem? Aqui é o Deivid, da Fluxa — ${abertura(lead)}.\n\n` +
+    `${apresentacao} — ${abertura(lead, ajustes.cidade)}.\n\n` +
     `${textoGancho}\n\n` +
     `A ideia pra vocês: ${proposta}.\n\n` +
-    fechamento(lead)
+    fechamento(lead, ajustes.chamada)
   )
 }

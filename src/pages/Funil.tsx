@@ -8,8 +8,10 @@ import {
 } from '../lib/types'
 import type { CanalContato } from '../lib/types'
 import { moeda } from '../lib/format'
+import { useNavigate } from 'react-router-dom'
 
 export function Funil() {
+  const navigate = useNavigate()
   const { data: leads, isLoading } = useLeads()
   const { data: contatos } = useTodosContatos()
 
@@ -51,8 +53,11 @@ export function Funil() {
 
   return (
     <div className="pagina">
-      <header className="pagina-topo">
+      <header className="cabecalho-pagina">
         <h2>Funil</h2>
+        <button className="btn btn-ghost" onClick={() => navigate('/quadro')}>
+          Ver quadro →
+        </button>
       </header>
 
       <div className="hero">

@@ -7,6 +7,8 @@ import {
   Play,
   Search,
   Radar,
+  Columns3,
+  SlidersHorizontal,
   TrendingUp,
   Users,
 } from 'lucide-react'
@@ -37,12 +39,16 @@ const GRUPOS: { titulo: string; itens: Item[] }[] = [
       { to: '/buscas', rotulo: 'Buscar leads', Icone: Radar, end: false },
       { to: '/lista', rotulo: 'Leads', Icone: Users, end: false },
       { to: '/rodada', rotulo: 'Rodada', Icone: Play, end: false },
+      { to: '/quadro', rotulo: 'Quadro', Icone: Columns3, end: false },
       { to: '/funil', rotulo: 'Funil', Icone: TrendingUp, end: false },
     ],
   },
   {
     titulo: 'Ajustes',
-    itens: [{ to: '/dados', rotulo: 'Dados', Icone: Database, end: false }],
+    itens: [
+      { to: '/ajustes', rotulo: 'Ajustes', Icone: SlidersHorizontal, end: false },
+      { to: '/dados', rotulo: 'Dados', Icone: Database, end: false },
+    ],
   },
 ]
 
@@ -54,7 +60,9 @@ const TITULOS: Record<string, string> = {
   '/buscas': 'Buscar leads',
   '/rodada': 'Rodada',
   '/funil': 'Funil',
+  '/quadro': 'Quadro do funil',
   '/dados': 'Dados',
+  '/ajustes': 'Ajustes',
 }
 
 function usePendencias() {
@@ -72,7 +80,7 @@ function usePendencias() {
 
 function ItensNav({ compacto = false }: { compacto?: boolean }) {
   const { followups } = usePendencias()
-  const itens = compacto ? TODOS.filter((i) => i.to !== '/rodada' && i.to !== '/buscas') : TODOS
+  const itens = compacto ? TODOS.filter((i) => i.to !== '/rodada' && i.to !== '/buscas' && i.to !== '/quadro' && i.to !== '/ajustes') : TODOS
 
   if (compacto) {
     return (
