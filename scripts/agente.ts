@@ -226,7 +226,12 @@ async function converte(
       perda_motivo: '',
       followup_em: null,
       followup_nota: '',
-      auditoria: { problemas: a.problemas, evidencia: a.evidencia, busca_id: b.id },
+      auditoria: {
+        problemas: a.problemas,
+        evidencia: a.evidencia,
+        busca_id: b.id,
+        origem: `busca pelo app ${HOJE()} — ${b.termos.join(', ')} em ${[b.bairro, b.cidade, b.uf].filter(Boolean).join(', ')}`,
+      },
       criado_em: new Date().toISOString(),
     })
   }
@@ -315,10 +320,14 @@ async function main() {
     }
   }
 
+  // sem orderBy aqui de proposito: combinar filtro e ordenacao exigiria um indice
+  // composto no Firestore. A fila e pequena, entao ordenamos na memoria.
   onSnapshot(
-    query(collection(db, 'buscas'), where('status', '==', 'na_fila'), orderBy('criado_em')),
+    query(collection(db, 'buscas'), where('status', '==', 'na_fila')),
     (snap) => {
-      const fila = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Busca, 'id'>) }))
+      const fila = snap.docs
+        .map((d) => ({ id: d.id, ...(d.data() as Omit<Busca, 'id'>) }))
+        .sort((a, b) => a.criado_em.localeCompare(b.criado_em))
       if (fila.length && !ocupado) void processa(fila[0])
     },
     (e) => log('erro observando a fila:', e.message),
