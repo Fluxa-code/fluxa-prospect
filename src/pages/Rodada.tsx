@@ -162,14 +162,17 @@ export function Rodada() {
 
   const salvando = registra.isPending || atualiza.isPending
 
+  const proximos = fila.slice(posicao + 1, posicao + 6)
+
   return (
-    <div className="pagina rodada">
-      <header className="pagina-topo">
+    <div className="pagina pagina-larga rodada">
+      <header className="cabecalho-pagina">
         <div>
           <h2>Rodada</h2>
           <span className="sub">
             {posicao + 1} de {total} · {feitos.enviados} enviada
             {feitos.enviados === 1 ? '' : 's'}
+            {feitos.pulados > 0 && ` · ${feitos.pulados} pulada${feitos.pulados === 1 ? '' : 's'}`}
           </span>
         </div>
         <button className="icone-btn" title="Sair da rodada" onClick={() => navigate('/lista')}>
@@ -181,6 +184,8 @@ export function Rodada() {
         <div className="barra" style={{ width: `${(posicao / total) * 100}%` }} />
       </div>
 
+      <div className="duas-colunas">
+        <section>
       <div className="card rodada-lead">
         <strong className="rodada-nome">{lead.nome}</strong>
         <span className="sub">{[lead.segmento, lead.endereco].filter(Boolean).join(' · ')}</span>
@@ -245,6 +250,31 @@ export function Rodada() {
       <p className="sub explicacao">
         "Enviei" registra o contato, move para contatado e agenda retorno em 3 dias.
       </p>
+        </section>
+
+        <aside>
+          <h3 className="secao">Próximos na fila</h3>
+          <div className="card lista-atividade">
+            {proximos.length === 0 && <p className="vazio">Este é o último da rodada.</p>}
+            {proximos.map((p, i) => (
+              <div key={p.id} className="atividade">
+                <span className="fila-ordem">{posicao + 2 + i}</span>
+                <span className="atividade-texto">
+                  <strong>{p.nome}</strong>
+                  <span className="sub">
+                    {p.cat} · tier {p.tier}
+                  </span>
+                </span>
+              </div>
+            ))}
+          </div>
+          {total - posicao - 1 > proximos.length && (
+            <p className="sub explicacao">
+              e mais {total - posicao - 1 - proximos.length} depois destes.
+            </p>
+          )}
+        </aside>
+      </div>
 
       <CanalSheet lead={canalAberto ? lead : null} onFechar={() => setCanalAberto(false)} />
     </div>

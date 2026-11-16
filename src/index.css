@@ -1293,3 +1293,344 @@ select.input {
     font-size: 16px; /* evita o zoom automatico do teclado no celular */
   }
 }
+
+/* ============ estrutura: coluna principal + barra superior ============ */
+
+.coluna-principal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background:
+    radial-gradient(900px 420px at 75% -8%, rgba(217, 164, 65, 0.055), transparent 65%),
+    var(--bg);
+}
+
+.barra-topo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 22px;
+  border-bottom: 1px solid var(--borda);
+  background: rgba(10, 10, 12, 0.72);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 15;
+}
+
+.barra-titulo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.9rem;
+  color: var(--texto-2);
+  white-space: nowrap;
+}
+
+.barra-titulo strong {
+  color: var(--texto);
+  font-weight: 600;
+}
+
+.barra-secao,
+.barra-sep {
+  color: var(--texto-3);
+}
+
+.barra-busca {
+  flex: 1;
+  max-width: 440px;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--borda);
+  color: var(--texto-3);
+  transition: border-color var(--transicao);
+}
+
+.barra-busca:focus-within {
+  border-color: var(--gold-escuro);
+}
+
+.barra-busca input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--texto);
+  font-family: inherit;
+  font-size: 0.88rem;
+  min-width: 0;
+}
+
+.btn-topo {
+  padding: 8px 15px;
+  font-size: 0.86rem;
+}
+
+.conteudo {
+  flex: 1;
+  overflow-y: auto;
+  background: none;
+}
+
+.pagina-larga {
+  max-width: 1120px;
+}
+
+.cabecalho-pagina {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.cabecalho-pagina h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+/* ============ menu agrupado ============ */
+
+.nav-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 14px;
+}
+
+.nav-grupo-titulo {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--texto-3);
+  padding: 0 12px 6px;
+}
+
+.nav-conta {
+  margin-left: auto;
+  background: var(--gold);
+  color: #17120a;
+  font-size: 0.68rem;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+
+.sidebar-status {
+  margin: 0 2px 10px;
+  padding: 11px 12px;
+  border-radius: var(--raio-mini);
+  background: var(--surface);
+  border: 1px solid var(--borda);
+}
+
+.status-linha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+}
+
+.sidebar-status small {
+  display: block;
+  margin-top: 3px;
+  color: var(--texto-3);
+  font-size: 0.75rem;
+}
+
+/* ============ cartões de número ============ */
+
+.grade-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 0;
+  padding: 15px 16px;
+}
+
+.tile-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.tile-rotulo {
+  font-size: 0.78rem;
+  color: var(--texto-2);
+  line-height: 1.3;
+}
+
+.tile-icone {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.tile-gold {
+  background: var(--gold-fundo);
+  color: var(--gold);
+}
+.tile-verde {
+  background: var(--verde-fundo);
+  color: var(--verde);
+}
+.tile-azul {
+  background: rgba(106, 159, 224, 0.14);
+  color: var(--azul);
+}
+.tile-laranja {
+  background: var(--laranja-fundo);
+  color: var(--laranja);
+}
+
+.tile-valor {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+}
+
+.tile-nota {
+  font-size: 0.75rem;
+  color: var(--texto-3);
+}
+
+/* ============ duas colunas ============ */
+
+.duas-colunas {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 26px;
+}
+
+@media (min-width: 1000px) {
+  .duas-colunas {
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 1fr);
+    align-items: start;
+  }
+}
+
+.lista-atividade {
+  padding: 6px;
+}
+
+.atividade {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: none;
+  border: none;
+  border-radius: var(--raio-mini);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transicao);
+}
+
+.atividade:hover {
+  background: var(--surface-2);
+}
+
+.atividade-ponto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--texto-3);
+  flex-shrink: 0;
+}
+
+.atividade-ponto.respondeu {
+  background: var(--verde);
+  box-shadow: 0 0 6px rgba(67, 195, 116, 0.6);
+}
+
+.atividade-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.atividade-texto strong {
+  font-size: 0.9rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.atividade-texto .sub {
+  font-size: 0.76rem;
+}
+
+.atividade-hora {
+  font-size: 0.72rem;
+  color: var(--texto-3);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+@media (max-width: 919px) {
+  .barra-topo {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+  .barra-titulo,
+  .btn-topo span {
+    display: none;
+  }
+  .barra-busca {
+    margin-left: 0;
+  }
+  .grade-tiles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .cabecalho-pagina {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+.fila-ordem {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: var(--surface-2);
+  border: 1px solid var(--borda);
+  color: var(--texto-3);
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+/* o X de sair da rodada fica na mesma linha do titulo, inclusive no celular */
+.rodada .cabecalho-pagina {
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+}

@@ -15,6 +15,7 @@ import {
 import { auth, db } from '../lib/firebase'
 import type { Contato, ContatoSeed, Lead } from '../lib/types'
 import type { ImportResult } from '../lib/importer'
+import { CONTATOS_DEMO, LEADS_DEMO, modoDemo } from '../lib/demo'
 
 const leadsCol = () => collection(db, 'leads')
 const contatosCol = () => collection(db, 'contatos')
@@ -23,6 +24,7 @@ export function useLeads() {
   return useQuery({
     queryKey: ['leads'],
     queryFn: async () => {
+      if (modoDemo) return LEADS_DEMO
       const snap = await getDocs(query(leadsCol(), orderBy('score', 'desc')))
       return snap.docs.map((d) => d.data() as Lead)
     },
@@ -34,6 +36,7 @@ export function useContatos(leadId: number) {
   return useQuery({
     queryKey: ['contatos', leadId],
     queryFn: async () => {
+      if (modoDemo) return CONTATOS_DEMO.filter((c) => c.lead_id === leadId)
       const snap = await getDocs(query(contatosCol(), where('lead_id', '==', leadId)))
       return snap.docs
         .map((d) => ({ id: d.id, ...(d.data() as ContatoSeed) }) as Contato)
@@ -46,6 +49,7 @@ export function useTodosContatos() {
   return useQuery({
     queryKey: ['contatos', 'todos'],
     queryFn: async () => {
+      if (modoDemo) return CONTATOS_DEMO
       const snap = await getDocs(contatosCol())
       return snap.docs.map((d) => ({ id: d.id, ...(d.data() as ContatoSeed) }) as Contato)
     },
