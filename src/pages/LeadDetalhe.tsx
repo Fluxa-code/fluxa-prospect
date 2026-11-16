@@ -1,9 +1,14 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ChevronLeft, Globe, MessageCircle, Pencil, Phone, Plus, Trash2 } from 'lucide-react'
-import { IconeFacebook, IconeInstagram } from '../components/IconesSociais'
-import { MensagemSugerida } from '../components/MensagemSugerida'
-import { EditarContatoSheet } from '../components/EditarContatoSheet'
+import {
+  ChevronLeft,
+  Globe,
+  MessageCircle,
+  Pencil,
+  Phone,
+  Plus,
+  Trash2,
+} from 'lucide-react'
 import { useApagaContato, useAtualizaLead, useContatos, useLeads } from '../hooks/useLeads'
 import type { Contato, Estagio, Lead } from '../lib/types'
 import {
@@ -16,7 +21,12 @@ import { CanalBadge, ConfiancaDot, TierBadge } from '../components/Badges'
 import { CanalSheet } from '../components/CanalSheet'
 import { BottomSheet } from '../components/BottomSheet'
 import { ContatoForm } from '../components/ContatoForm'
+import { MensagemSugerida } from '../components/MensagemSugerida'
+import { EditarContatoSheet } from '../components/EditarContatoSheet'
+import { IconeFacebook, IconeInstagram } from '../components/IconesSociais'
 import { dataCurta, dataHora, hojeIso, linkTelefone, linkWhatsapp, somaDias } from '../lib/format'
+
+type Aba = 'abordagem' | 'historico' | 'dados'
 
 function CampoValor({ lead }: { lead: Lead }) {
   const atualiza = useAtualizaLead()
@@ -72,6 +82,8 @@ export function LeadDetalhe() {
   const { data: contatos } = useContatos(Number(id))
   const atualiza = useAtualizaLead()
   const apaga = useApagaContato()
+
+  const [aba, setAba] = useState<Aba>('abordagem')
   const [canalAberto, setCanalAberto] = useState(false)
   const [contatoAberto, setContatoAberto] = useState(false)
   const [contatoEmEdicao, setContatoEmEdicao] = useState<Contato | null>(null)
@@ -92,212 +104,295 @@ export function LeadDetalhe() {
     lead.canal_status !== 'fixo_sem_whatsapp' &&
     lead.canal_status !== 'whatsapp_bot' &&
     lead.canal_status !== 'sem_contato'
+  const instagram = lead.instagram
+    ? lead.instagram.startsWith('http')
+      ? lead.instagram
+      : `https://instagram.com/${lead.instagram.replace(/^@/, '')}`
+    : ''
 
   const municao: [string, string][] = [
     ['Estado do site', lead.estado],
-    ['CMS', lead.cms],
     ['Problemas', aud('problemas')],
     ['Oportunidade', aud('oportunidade') || aud('acao')],
     ['Por que abordar', aud('motivo')],
+  ]
+
+  const ficha: [string, string][] = [
+    ['Telefone', lead.telefone],
+    ['Site', lead.site],
+    ['Instagram', lead.instagram],
+    ['CNPJ', lead.cnpj],
+    ['Categoria', lead.cat],
+    ['Plataforma do site', lead.cms],
+    ['Confiança do dado', lead.confianca],
+    ['Verificação', VERIFICACAO_LABEL[lead.verificacao]],
     ['Evidência', aud('evidencia')],
+    ['Observações', aud('notas')],
     ['Sinais de obsolescência', aud('sinais_obsolescencia')],
-    ['Notas', aud('notas')],
+    ['Origem', aud('origem')],
+    ['Cadastrado em', dataCurta(lead.criado_em)],
+    ['Atualizado em', dataCurta(lead.atualizado_em)],
   ]
 
   return (
-    <div className="pagina detalhe">
+    <div className="pagina pagina-larga detalhe">
       <button className="voltar" onClick={() => navigate(-1)}>
         <ChevronLeft size={16} /> voltar
       </button>
 
-      <div className="detalhe-colunas">
-      <div>
-      <header className="detalhe-topo">
-        <h2>{lead.nome}</h2>
-        <span className="sub">
-          {[lead.segmento, lead.cat].filter(Boolean).join(' · ')}
-        </span>
-        {lead.endereco && <span className="sub">{lead.endereco}</span>}
-        {lead.cnpj && <span className="sub mono">CNPJ {lead.cnpj}</span>}
-        <div className="badges">
-          <TierBadge tier={lead.tier} score={lead.score} />
-          <CanalBadge status={lead.canal_status} onClick={() => setCanalAberto(true)} />
-          <ConfiancaDot confianca={lead.confianca} />
+      <header className="detalhe-cabecalho">
+        <div className="detalhe-identidade">
+          <h2>{lead.nome}</h2>
+          <span className="sub">{[lead.segmento, lead.cat].filter(Boolean).join(' · ')}</span>
+          {lead.endereco && <span className="sub">{lead.endereco}</span>}
+          <div className="badges">
+            <TierBadge tier={lead.tier} score={lead.score} />
+            <CanalBadge status={lead.canal_status} onClick={() => setCanalAberto(true)} />
+            <ConfiancaDot confianca={lead.confianca} />
+          </div>
         </div>
-        {lead.verificacao !== 'completa' && (
-          <p className={`alerta ${lead.verificacao === 'parcial' ? 'alerta-laranja' : 'alerta-cinza'}`}>
-            {lead.verificacao === 'parcial' ? '⚠' : '?'} {VERIFICACAO_LABEL[lead.verificacao]} —
-            confirme os dados antes de usar na abordagem.
-          </p>
-        )}
+
+        <div className="acoes-grandes">
+          {mostraWa && (
+            <a className="btn btn-verde" href={wa!} target="_blank" rel="noreferrer">
+              <MessageCircle size={16} /> WhatsApp
+            </a>
+          )}
+          {tel && (
+            <a className="btn btn-ghost" href={tel}>
+              <Phone size={15} /> Ligar
+            </a>
+          )}
+          {instagram && (
+            <a className="btn btn-ghost" href={instagram} target="_blank" rel="noreferrer">
+              <IconeInstagram size={15} /> Instagram
+            </a>
+          )}
+          {lead.facebook && (
+            <a className="btn btn-ghost" href={lead.facebook} target="_blank" rel="noreferrer">
+              <IconeFacebook size={15} /> Facebook
+            </a>
+          )}
+          {lead.site && (
+            <a className="btn btn-ghost" href={lead.site} target="_blank" rel="noreferrer">
+              <Globe size={15} /> Site
+            </a>
+          )}
+        </div>
       </header>
 
-      <div className="acoes-grandes">
-        {mostraWa && (
-          <a className="btn btn-verde" href={wa!} target="_blank" rel="noreferrer">
-            <MessageCircle size={16} /> WhatsApp
-          </a>
-        )}
-        {tel && (
-          <a className="btn btn-ghost" href={tel}>
-            <Phone size={15} /> Ligar
-          </a>
-        )}
-        {lead.instagram && (
-          <a
-            className="btn btn-ghost"
-            href={
-              lead.instagram.startsWith('http')
-                ? lead.instagram
-                : `https://instagram.com/${lead.instagram.replace(/^@/, '')}`
-            }
-            target="_blank"
-            rel="noreferrer"
-          >
-            <IconeInstagram size={15} /> Instagram
-          </a>
-        )}
-        {lead.facebook && (
-          <a className="btn btn-ghost" href={lead.facebook} target="_blank" rel="noreferrer">
-            <IconeFacebook size={15} /> Facebook
-          </a>
-        )}
-        {lead.site && (
-          <a className="btn btn-ghost" href={lead.site} target="_blank" rel="noreferrer">
-            <Globe size={15} /> Site
-          </a>
-        )}
-      </div>
-
-      <h3 className="secao">Estágio</h3>
-      <div className="chips-row">
-        {ESTAGIO_VALUES.map((e) => (
-          <button
-            key={e}
-            className={`chip ${lead.estagio === e ? 'ativa' : ''}`}
-            onClick={() => atualiza.mutate({ id: lead.id, patch: { estagio: e as Estagio } })}
-          >
-            {ESTAGIO_LABEL[e]}
-          </button>
-        ))}
-      </div>
-      {(lead.estagio === 'negociacao' || lead.estagio === 'fechado') && <CampoValor key={`v${lead.id}`} lead={lead} />}
-      {(lead.estagio === 'perdido' || lead.estagio === 'recusado') && (
-        <CampoPerda key={`p${lead.id}-${lead.estagio}`} lead={lead} />
+      {lead.verificacao !== 'completa' && (
+        <p
+          className={`alerta ${lead.verificacao === 'parcial' ? 'alerta-laranja' : 'alerta-cinza'}`}
+        >
+          {lead.verificacao === 'parcial' ? '⚠' : '?'} {VERIFICACAO_LABEL[lead.verificacao]} —
+          confirme os dados antes de usar na abordagem.
+        </p>
       )}
 
-      <h3 className="secao">Follow-up</h3>
-      <div className="chips-row">
-        {lead.followup_em ? (
-          <>
-            <span className="badge cor-gold">
-              {dataCurta(lead.followup_em)}
-              {lead.followup_nota && ` — ${lead.followup_nota}`}
-            </span>
+      <div className="detalhe-corpo">
+        <section>
+          <div className="abas">
             <button
-              className="chip"
-              onClick={() =>
-                atualiza.mutate({ id: lead.id, patch: { followup_em: somaDias(hojeIso(), 2) } })
-              }
+              className={`aba ${aba === 'abordagem' ? 'ativa' : ''}`}
+              onClick={() => setAba('abordagem')}
             >
-              +2d
+              Abordagem
             </button>
             <button
-              className="chip"
-              onClick={() =>
-                atualiza.mutate({ id: lead.id, patch: { followup_em: somaDias(hojeIso(), 7) } })
-              }
+              className={`aba ${aba === 'historico' ? 'ativa' : ''}`}
+              onClick={() => setAba('historico')}
             >
-              +7d
+              Histórico ({contatos?.length ?? 0})
             </button>
             <button
-              className="chip"
-              onClick={() =>
-                atualiza.mutate({ id: lead.id, patch: { followup_em: null, followup_nota: '' } })
-              }
+              className={`aba ${aba === 'dados' ? 'ativa' : ''}`}
+              onClick={() => setAba('dados')}
             >
-              remover
+              Dados
             </button>
-          </>
-        ) : (
-          <>
-            <button
-              className="chip"
-              onClick={() =>
-                atualiza.mutate({ id: lead.id, patch: { followup_em: somaDias(hojeIso(), 2) } })
-              }
-            >
-              +2 dias
-            </button>
-            <button
-              className="chip"
-              onClick={() =>
-                atualiza.mutate({ id: lead.id, patch: { followup_em: somaDias(hojeIso(), 7) } })
-              }
-            >
-              +7 dias
-            </button>
-          </>
-        )}
-      </div>
+          </div>
 
-      </div>
+          {aba === 'abordagem' && (
+            <>
+              <div className="card municao">
+                {municao
+                  .filter(([, v]) => v)
+                  .map(([rotulo, v]) => (
+                    <p key={rotulo}>
+                      <strong>{rotulo}:</strong> {v}
+                    </p>
+                  ))}
+                {municao.every(([, v]) => !v) && (
+                  <p className="vazio">Sem diagnóstico registrado para este lead.</p>
+                )}
+              </div>
 
-      <div>
-      <h3 className="secao">Munição de abordagem</h3>
-      <div className="card municao">
-        {municao
-          .filter(([, v]) => v)
-          .map(([rotulo, v]) => (
-            <p key={rotulo}>
-              <strong>{rotulo}:</strong> {v}
-            </p>
-          ))}
-      </div>
+              <MensagemSugerida key={`m${lead.id}`} lead={lead} />
 
-      <MensagemSugerida key={`m${lead.id}`} lead={lead} />
+              <div className="registrar-wrap">
+                <button className="btn btn-gold largo" onClick={() => setContatoAberto(true)}>
+                  <Plus size={17} /> Registrar contato
+                </button>
+              </div>
+            </>
+          )}
 
-      <div className="registrar-wrap">
-        <button className="btn btn-gold largo" onClick={() => setContatoAberto(true)}>
-          <Plus size={17} /> Registrar contato
-        </button>
-      </div>
+          {aba === 'historico' && (
+            <>
+              <div className="registrar-wrap">
+                <button className="btn btn-gold largo" onClick={() => setContatoAberto(true)}>
+                  <Plus size={17} /> Registrar contato
+                </button>
+              </div>
+              {contatos?.length === 0 && <p className="vazio">Nenhum contato registrado ainda.</p>}
+              {contatos?.map((c) => (
+                <div key={c.id} className="card contato">
+                  <div className="contato-topo">
+                    <span className="sub">
+                      {dataHora(c.em)} · {CANAL_CONTATO_LABEL[c.canal]}
+                    </span>
+                    <div className="contato-acoes">
+                      <button
+                        className="icone-btn"
+                        title="Corrigir"
+                        onClick={() => setContatoEmEdicao(c)}
+                      >
+                        <Pencil size={14} />
+                      </button>
+                      <button
+                        className="icone-btn perigo"
+                        title="Apagar"
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `Apagar o contato de ${dataHora(c.em)}? Não dá pra desfazer.`,
+                            )
+                          ) {
+                            apaga.mutate({ id: c.id, lead_id: c.lead_id })
+                          }
+                        }}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                  {c.enviado && <p>{c.enviado}</p>}
+                  {c.resposta && <p className="resposta">↳ {c.resposta}</p>}
+                </div>
+              ))}
+            </>
+          )}
 
-      <h3 className="secao">Histórico ({contatos?.length ?? 0})</h3>
-      {contatos?.length === 0 && <p className="vazio">Nenhum contato registrado ainda.</p>}
-      {contatos?.map((c) => (
-        <div key={c.id} className="card contato">
-          <div className="contato-topo">
-            <span className="sub">
-              {dataHora(c.em)} · {CANAL_CONTATO_LABEL[c.canal]}
-            </span>
-            <div className="contato-acoes">
-              <button
-                className="icone-btn"
-                title="Corrigir"
-                onClick={() => setContatoEmEdicao(c)}
-              >
-                <Pencil size={14} />
-              </button>
-              <button
-                className="icone-btn perigo"
-                title="Apagar"
-                onClick={() => {
-                  if (window.confirm(`Apagar o contato de ${dataHora(c.em)}? Não dá pra desfazer.`)) {
-                    apaga.mutate({ id: c.id, lead_id: c.lead_id })
-                  }
-                }}
-              >
-                <Trash2 size={14} />
-              </button>
+          {aba === 'dados' && (
+            <div className="card ficha">
+              {ficha.every(([, v]) => !v) && <p className="vazio">Sem dados cadastrados.</p>}
+              {ficha
+                .filter(([, v]) => v)
+                .map(([rotulo, v]) => (
+                  <div key={rotulo} className="ficha-linha">
+                    <span className="ficha-rotulo">{rotulo}</span>
+                    <span className="ficha-valor">{v}</span>
+                  </div>
+                ))}
+            </div>
+          )}
+        </section>
+
+        <aside className="painel-situacao">
+          <h3 className="secao">Situação</h3>
+          <div className="card">
+            <label className="label">Estágio</label>
+            <div className="chips-row">
+              {ESTAGIO_VALUES.map((e) => (
+                <button
+                  key={e}
+                  className={`chip ${lead.estagio === e ? 'ativa' : ''}`}
+                  onClick={() => atualiza.mutate({ id: lead.id, patch: { estagio: e as Estagio } })}
+                >
+                  {ESTAGIO_LABEL[e]}
+                </button>
+              ))}
+            </div>
+
+            {(lead.estagio === 'negociacao' || lead.estagio === 'fechado') && (
+              <CampoValor key={`v${lead.id}`} lead={lead} />
+            )}
+            {(lead.estagio === 'perdido' || lead.estagio === 'recusado') && (
+              <CampoPerda key={`p${lead.id}-${lead.estagio}`} lead={lead} />
+            )}
+
+            <label className="label">Follow-up</label>
+            <div className="chips-row">
+              {lead.followup_em ? (
+                <>
+                  <span className="badge cor-gold">
+                    {dataCurta(lead.followup_em)}
+                    {lead.followup_nota && ` — ${lead.followup_nota}`}
+                  </span>
+                  <button
+                    className="chip"
+                    onClick={() =>
+                      atualiza.mutate({
+                        id: lead.id,
+                        patch: { followup_em: somaDias(hojeIso(), 2) },
+                      })
+                    }
+                  >
+                    +2d
+                  </button>
+                  <button
+                    className="chip"
+                    onClick={() =>
+                      atualiza.mutate({
+                        id: lead.id,
+                        patch: { followup_em: somaDias(hojeIso(), 7) },
+                      })
+                    }
+                  >
+                    +7d
+                  </button>
+                  <button
+                    className="chip"
+                    onClick={() =>
+                      atualiza.mutate({
+                        id: lead.id,
+                        patch: { followup_em: null, followup_nota: '' },
+                      })
+                    }
+                  >
+                    remover
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="chip"
+                    onClick={() =>
+                      atualiza.mutate({
+                        id: lead.id,
+                        patch: { followup_em: somaDias(hojeIso(), 2) },
+                      })
+                    }
+                  >
+                    +2 dias
+                  </button>
+                  <button
+                    className="chip"
+                    onClick={() =>
+                      atualiza.mutate({
+                        id: lead.id,
+                        patch: { followup_em: somaDias(hojeIso(), 7) },
+                      })
+                    }
+                  >
+                    +7 dias
+                  </button>
+                </>
+              )}
             </div>
           </div>
-          {c.enviado && <p>{c.enviado}</p>}
-          {c.resposta && <p className="resposta">↳ {c.resposta}</p>}
-        </div>
-      ))}
-
-      </div>
+        </aside>
       </div>
 
       <EditarContatoSheet contato={contatoEmEdicao} onFechar={() => setContatoEmEdicao(null)} />
