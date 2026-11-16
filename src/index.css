@@ -1237,3 +1237,59 @@ select.input {
   margin-top: 8px;
   font-size: 0.88rem;
 }
+
+/* ============ modo rodada ============ */
+
+.rodada-progresso {
+  margin: 4px 0 14px;
+}
+
+.rodada-lead {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rodada-nome {
+  font-size: 1.15rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.rodada-lead .badges {
+  margin-top: 8px;
+}
+
+.rodada-municao {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--borda);
+  font-size: 0.88rem;
+  color: var(--texto-2);
+  line-height: 1.45;
+}
+
+.rodada-canais {
+  margin-top: 10px;
+}
+
+.rodada-acoes {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.rodada-acoes .largo {
+  flex: 1;
+}
+
+.rodada-iniciar {
+  margin-bottom: 12px;
+}
+
+@media (max-width: 919px) {
+  .rodada .input {
+    font-size: 16px; /* evita o zoom automatico do teclado no celular */
+  }
+}

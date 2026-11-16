@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Plus } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Play, Plus } from 'lucide-react'
 import { useLeads, useRecuperaDataCriacao } from '../hooks/useLeads'
 import { agrupaPorCriacao, type Ordem } from '../lib/ordem'
 import type { Lead } from '../lib/types'
@@ -38,6 +39,7 @@ function ordemSalva(): Ordem {
 }
 
 export function Lista() {
+  const navigate = useNavigate()
   const { data: leads, isLoading } = useLeads()
   const recupera = useRecuperaDataCriacao()
   const [ordem, setOrdem] = useState<Ordem>(ordemSalva)
@@ -128,6 +130,18 @@ export function Lista() {
           <span className="sub">
             {filtrados.length} de {leads?.length ?? 0}
           </span>
+          <button
+            className="btn btn-ghost btn-novo"
+            title="Abordar em série os não contatados deste filtro"
+            onClick={() => {
+              const p = new URLSearchParams()
+              if (filtros.tier.size) p.set('tier', [...filtros.tier].join(','))
+              if (filtros.cat.size) p.set('cat', [...filtros.cat].join(','))
+              navigate(`/rodada${p.toString() ? `?${p}` : ''}`)
+            }}
+          >
+            <Play size={15} /> Rodada
+          </button>
           <button className="btn btn-gold btn-novo" onClick={() => setNovoAberto(true)}>
             <Plus size={16} /> Novo
           </button>

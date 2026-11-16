@@ -17,6 +17,7 @@ import { Hoje } from './pages/Hoje'
 import { Lista } from './pages/Lista'
 import { LeadDetalhe } from './pages/LeadDetalhe'
 import { Funil } from './pages/Funil'
+import { Rodada } from './pages/Rodada'
 import { Dados } from './pages/Dados'
 
 const NAV = [
@@ -109,6 +110,7 @@ export default function App() {
           <Route path="/" element={<Hoje />} />
           <Route path="/lista" element={<Lista />} />
           <Route path="/lead/:id" element={<LeadDetalhe />} />
+          <Route path="/rodada" element={<Rodada />} />
           <Route path="/funil" element={<Funil />} />
           <Route path="/dados" element={<Dados />} />
         </Routes>

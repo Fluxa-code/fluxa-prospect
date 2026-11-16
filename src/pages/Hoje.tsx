@@ -5,10 +5,13 @@ import { ESTAGIOS_ENCERRADOS } from '../lib/types'
 import { LeadCard } from '../components/LeadCard'
 import { CanalSheet } from '../components/CanalSheet'
 import { dataCurta, diasAtraso, hojeIso, somaDias } from '../lib/format'
+import { useNavigate } from 'react-router-dom'
+import { Play } from 'lucide-react'
 
 export function Hoje() {
   const { data: leads, isLoading } = useLeads()
   const atualiza = useAtualizaLead()
+  const navigate = useNavigate()
   const [canalDe, setCanalDe] = useState<Lead | null>(null)
 
   if (isLoading) return <p className="aviso-tela">Carregando…</p>
@@ -98,6 +101,11 @@ export function Hoje() {
       })}
 
       <h3 className="secao">Prioritários ainda não tocados (tier A/B)</h3>
+      {prioritarios.length > 0 && (
+        <button className="btn btn-gold largo rodada-iniciar" onClick={() => navigate('/rodada?tier=A,B')}>
+          <Play size={16} /> Iniciar rodada com estes {prioritarios.length}
+        </button>
+      )}
       {prioritarios.length === 0 && <p className="vazio">Todos os A/B viáveis já foram tocados.</p>}
       {prioritarios.map((lead) => (
         <LeadCard key={lead.id} lead={lead} onCanal={setCanalDe} />
