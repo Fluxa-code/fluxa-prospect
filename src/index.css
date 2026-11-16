@@ -1634,3 +1634,104 @@ select.input {
   align-items: flex-start;
   justify-content: space-between;
 }
+
+/* ============ buscar leads ============ */
+
+.linha-campos {
+  display: grid;
+  grid-template-columns: 2fr 0.6fr 2fr;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.campo-uf .input {
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.grade-tamanhos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.cartao-tamanho {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 11px 12px;
+  border-radius: var(--raio-mini);
+  border: 1px solid var(--borda-forte);
+  background: var(--surface-2);
+  color: var(--texto);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color var(--transicao), background var(--transicao);
+}
+
+.cartao-tamanho:hover {
+  border-color: var(--gold-escuro);
+}
+
+.cartao-tamanho.ativo {
+  border-color: var(--gold);
+  background: var(--gold-fundo);
+}
+
+.cartao-tamanho strong {
+  font-size: 0.86rem;
+  font-weight: 650;
+}
+
+.cartao-tamanho span {
+  font-size: 0.92rem;
+  color: var(--texto);
+}
+
+.cartao-tamanho small {
+  font-size: 0.72rem;
+  color: var(--texto-3);
+}
+
+.icone-busca {
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+}
+
+.busca-item {
+  align-items: flex-start;
+  cursor: default;
+}
+
+.busca-item:hover {
+  background: none;
+}
+
+.busca-acoes {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.girando {
+  animation: girar 1.2s linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 919px) {
+  .linha-campos {
+    grid-template-columns: 1fr 0.5fr;
+  }
+  .grade-tamanhos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

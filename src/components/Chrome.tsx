@@ -6,6 +6,7 @@ import {
   LogOut,
   Play,
   Search,
+  Radar,
   TrendingUp,
   Users,
 } from 'lucide-react'
@@ -32,6 +33,7 @@ const GRUPOS: { titulo: string; itens: Item[] }[] = [
   {
     titulo: 'Prospecção',
     itens: [
+      { to: '/buscas', rotulo: 'Buscar leads', Icone: Radar, end: false },
       { to: '/lista', rotulo: 'Leads', Icone: Users, end: false },
       { to: '/rodada', rotulo: 'Rodada', Icone: Play, end: false },
       { to: '/funil', rotulo: 'Funil', Icone: TrendingUp, end: false },
@@ -48,6 +50,7 @@ const TODOS = GRUPOS.flatMap((g) => g.itens)
 const TITULOS: Record<string, string> = {
   '/': 'Hoje',
   '/lista': 'Leads',
+  '/buscas': 'Buscar leads',
   '/rodada': 'Rodada',
   '/funil': 'Funil',
   '/dados': 'Dados',
@@ -68,7 +71,7 @@ function usePendencias() {
 
 function ItensNav({ compacto = false }: { compacto?: boolean }) {
   const { followups } = usePendencias()
-  const itens = compacto ? TODOS.filter((i) => i.to !== '/rodada') : TODOS
+  const itens = compacto ? TODOS.filter((i) => i.to !== '/rodada' && i.to !== '/buscas') : TODOS
 
   if (compacto) {
     return (

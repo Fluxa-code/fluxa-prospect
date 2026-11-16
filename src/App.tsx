@@ -5,6 +5,7 @@ import { BarraTopo, NavMobile, Sidebar } from './components/Chrome'
 import { Login } from './pages/Login'
 import { Hoje } from './pages/Hoje'
 import { Lista } from './pages/Lista'
+import { Buscas } from './pages/Buscas'
 import { LeadDetalhe } from './pages/LeadDetalhe'
 import { Funil } from './pages/Funil'
 import { Rodada } from './pages/Rodada'
@@ -48,6 +49,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Hoje />} />
             <Route path="/lista" element={<Lista />} />
+            <Route path="/buscas" element={<Buscas />} />
             <Route path="/lead/:id" element={<LeadDetalhe />} />
             <Route path="/rodada" element={<Rodada />} />
             <Route path="/funil" element={<Funil />} />
